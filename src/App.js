@@ -1,16 +1,9 @@
 import logo from "./logo.svg";
 import "./App.css";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 function App() {
   const [apiResponse, resChange] = useState("");
-
-  function callAPI() {
-    fetch("http://127.0.1.1:9000/testAPI")
-      .then((res) => res.text())
-      .then((res) => resChange(res));
-  }
-  const si = require("systeminformation");
   const [OS, changeInfo] = useState("");
   const naver = () => {
     var OSName = "Unknown OS";
