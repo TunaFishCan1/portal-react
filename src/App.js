@@ -17,7 +17,6 @@ function App() {
     if (!isMobile) {
       if (navigator.appVersion.indexOf("Win") !== -1) OSName = "Windows";
       if (navigator.appVersion.indexOf("Mac") !== -1) OSName = "MacOS";
-      if (navigator.appVersion.indexOf("Linux") !== -1) OSName = "UNIX";
       if (navigator.appVersion.indexOf("Linux") !== -1) OSName = "Linux";
     } else {
       if (isAndroid) OSName = "Android";
@@ -28,13 +27,28 @@ function App() {
     window.open(url);
     var json = { url: url, access: 0, OS: OS };
     if (isMobile) {
-      json = {
+      var json = {
         manufacturer: mobileVendor,
         model: mobileModel,
         url: url,
         access: 1,
         OS: OS,
       };
+    }
+    fetch("http://192.168.56.1:9000/testAPI", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(json),
+    })
+      .then((res) => res.text())
+      .then((res) => resChange(res));
+  }
+  function query() {
+    var json = { access: 10 };
+    if (isMobile) {
+      json = { access: 11 };
     }
     fetch("http://192.168.56.1:9000/testAPI", {
       method: "POST",
@@ -62,6 +76,10 @@ function App() {
         <br></br>
         <button type="button" onClick={() => web("https://www.nate.com/")}>
           Nate
+        </button>
+        <br></br>
+        <button type="button" onClick={() => query()}>
+          사용 내역 검색
         </button>
       </header>
     </div>
