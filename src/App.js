@@ -13,7 +13,7 @@ function App() {
     if (navigator.appVersion.indexOf("Linux") !== -1) OSName = "Linux";
     changeInfo(OSName);
     window.open("http://naver.com");
-    fetch("http://127.0.1.1:9000/testAPI", {
+    fetch("http://192.168.56.1:9000/testAPI", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +31,7 @@ function App() {
     if (navigator.appVersion.indexOf("Linux") !== -1) OSName = "Linux";
     changeInfo(OSName);
     window.open("https://www.daum.net/");
-    fetch("http://127.0.1.1:9000/testAPI", {
+    fetch("http://192.168.56.1:9000/testAPI", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +49,7 @@ function App() {
     if (navigator.appVersion.indexOf("Linux") !== -1) OSName = "Linux";
     changeInfo(OSName);
     window.open("https://www.nate.com/");
-    fetch("http://127.0.1.1:9000/testAPI", {
+    fetch("http://192.168.56.1:9000/testAPI", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
