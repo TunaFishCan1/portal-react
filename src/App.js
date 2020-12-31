@@ -70,11 +70,11 @@ function App() {
           Naver
         </button>
         <br></br>
-        <button type="button" onClick={() => web("https://www.daum.net/")}>
+        <button type="button" onClick={() => web("https://www.daum.net")}>
           Daum
         </button>
         <br></br>
-        <button type="button" onClick={() => web("https://www.nate.com/")}>
+        <button type="button" onClick={() => web("https://www.nate.com")}>
           Nate
         </button>
         <br></br>
