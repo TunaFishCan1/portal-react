@@ -9,9 +9,15 @@ import {
   mobileVendor,
   mobileModel,
 } from "react-device-detect";
+const publicIp = require("public-ip");
+
 function App() {
   const [apiResponse, resChange] = useState("");
   const [OS, changeInfo] = useState("");
+  const [IP, getIP] = useState("");
+  (async () => {
+    getIP(await publicIp.v4());
+  })();
   function web(url) {
     var OSName = "Unknown OS";
     if (!isMobile) {
@@ -25,7 +31,10 @@ function App() {
     }
     changeInfo(OSName);
     window.open(url);
-    var json = { url: url, access: 0, OS: OS };
+    (async () => {
+      getIP(await publicIp.v4());
+    })();
+    var json = { url: url, access: 0, OS: OS, ip: IP };
     if (isMobile) {
       var json = {
         manufacturer: mobileVendor,
@@ -33,6 +42,7 @@ function App() {
         url: url,
         access: 1,
         OS: OS,
+        ip: IP,
       };
     }
     fetch("http://192.168.56.1:9000/testAPI", {
@@ -46,9 +56,12 @@ function App() {
       .then((res) => resChange(res));
   }
   function query() {
-    var json = { access: 10 };
+    (async () => {
+      getIP(await publicIp.v4());
+    })();
+    var json = { access: 10, ip: IP };
     if (isMobile) {
-      json = { access: 11 };
+      json = { access: 11, ip: IP };
     }
     fetch("http://192.168.56.1:9000/testAPI", {
       method: "POST",
@@ -63,9 +76,6 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p className="App-intro">{apiResponse}</p>
-        <br></br>
         <button type="button" onClick={() => web("http://naver.com")}>
           Naver
         </button>
@@ -81,6 +91,10 @@ function App() {
         <button type="button" onClick={() => query()}>
           사용 내역 검색
         </button>
+        <br></br>
+        <p className="App-intro" style={{ "font-size": "15px" }}>
+          {apiResponse}
+        </p>
       </header>
     </div>
   );
