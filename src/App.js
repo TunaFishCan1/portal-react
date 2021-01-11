@@ -17,43 +17,35 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
+const publicIp = require("public-ip");
 const columns = [
-  { id: "addr", label: "접속주소", minWidth: 170 },
-  { id: "meth", label: "접속방법", minWidth: 100 },
+  { id: "addr", label: "접속주소" },
+  { id: "meth", label: "접속방법" },
   {
     id: "time",
     label: "접속시각",
-    minWidth: 170,
-    align: "right",
     format: (value) => value.toLocaleString("ko-KR"),
   },
   {
     id: "model",
     label: "기종",
-    minWidth: 170,
-    align: "right",
     format: (value) => value.toLocaleString("ko-KR"),
   },
   {
     id: "manu",
     label: "제조사",
-    minWidth: 170,
-    align: "right",
     format: (value) => value.toLocaleString("ko-KR"),
   },
 ];
-function createData(addr, meth, time, model, manu) {
-  return { addr, meth, time, model, manu };
-}
 const useStyles = makeStyles({
   root: {
     width: "100%",
+    maxWidth: 1200,
   },
   container: {
-    maxHeight: 440,
+    maxHeight: 600,
   },
 });
-const publicIp = require("public-ip");
 <link
   rel="stylesheet"
   href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
@@ -62,7 +54,6 @@ const publicIp = require("public-ip");
   rel="stylesheet"
   href="https://fonts.googleapis.com/icon?family=Material+Icons"
 />;
-
 function App() {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
@@ -85,6 +76,7 @@ function App() {
     getIP(await publicIp.v4());
   })();
   function web(url) {
+    document.getElementById("tab").style.display = "none";
     var OSName = "Unknown OS";
     if (!isMobile) {
       if (navigator.appVersion.indexOf("Win") !== -1) OSName = "Windows";
@@ -111,17 +103,16 @@ function App() {
         ip: IP,
       };
     }
-    fetch("http://192.168.56.1:9000/testAPI", {
+    fetch("http://192.168.56.1:9000/backend", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(json),
-    })
-      .then((res) => res.text())
-      .then((res) => resChange(res));
+    });
   }
   function query() {
+    document.getElementById("tab").style.display = "inline";
     (async () => {
       getIP(await publicIp.v4());
     })();
@@ -129,7 +120,7 @@ function App() {
     if (isMobile) {
       json = { access: 11, ip: IP };
     }
-    fetch("http://192.168.56.1:9000/testAPI", {
+    fetch("http://192.168.56.1:9000/backend", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -161,62 +152,66 @@ function App() {
         <p className="App-intro" style={{ "font-size": "15px" }}>
           {apiResponse}
         </p>
-      </header>
-      <Paper className={classes.root}>
-        <TableContainer className={classes.container}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.code}
+        <Paper id="tab" className={classes.root} style={{ display: "none" }}>
+          <TableContainer className={classes.container}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      style={{
+                        minWidth: column.minWidth,
+                        backgroundColor: "gray",
+                        color: "white",
+                      }}
                     >
-                      {columns.map((column) => {
-                        const value = row[column.id];
-                        return (
-                          <TableCell key={column.id} align={column.align}>
-                            {column.format && typeof value === "string"
-                              ? column.format(value)
-                              : value}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      </Paper>
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.code}
+                      >
+                        {columns.map((column) => {
+                          const value = row[column.id];
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {column.format && typeof value === "string"
+                                ? column.format(value)
+                                : value}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+            style={{ backgroundColor: "gray", color: "white" }}
+          />
+        </Paper>
+      </header>
     </div>
   );
 }
-
 export default App;
